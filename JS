@@ -1,6 +1,11 @@
+var pieces = [];
+
 function setup(){
-  createCanvas(400,400)
-  background(200)
+  createCanvas(400,400);
+  background(200);
+	console.log("0");
+	createPieces();
+	console.log("1");
 }
 
 function draw(){
@@ -27,4 +32,52 @@ function draw(){
     }    
     rows = rows + 1
   }
+	
+	pieces.forEach(row => {
+		row.forEach(piece => {
+			if (piece == null) return;
+			fill(piece.color);
+			circle(piece.x + 25, piece.y + 25, 50);
+		});
+	});
+}
+
+function createPieces() {
+	for (let i = 0; i < 8; i++) {
+		pieces[i] = [];
+		for (let j = 0; j < 8; j++) {
+			pieces[i][j] = null;
+			if ((i + j) % 2 == 1) {
+				if (j < 3) {
+					pieces[i][j] = {
+						"x": i * 50,
+						"y": j * 50,
+						"color": "red",
+						"isKing": false
+					};
+				}
+				if (j > 4) {
+					pieces[i][j] = {
+						"x": i * 50,
+						"y": j * 50,
+						"color": "cyan",
+						"isKing": false
+					};
+				}
+			}
+		}
+		console.log(pieces[i]);
+	}
+}
+
+function mousePressed(event) {
+	pieces.forEach(row => {
+		row.forEach(piece => {
+			if (piece == null) return;
+			if ((mouseX > piece.x && mouseX < piece.x + 50) && (mouseY > piece.y && mouseY < piece.y + 50)) {
+				console.log("Clicked: " + piece);
+				console.log(piece);
+			}
+		});
+	});
 }
