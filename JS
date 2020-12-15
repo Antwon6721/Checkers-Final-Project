@@ -1,11 +1,12 @@
 var pieces = [];
+var sSelected = false;
+var xSelected;
+var ySelected;
 
 function setup(){
   createCanvas(400,400);
   background(200);
-	console.log("0");
 	createPieces();
-	console.log("1");
 }
 
 function draw(){
@@ -36,6 +37,10 @@ function draw(){
 	pieces.forEach(row => {
 		row.forEach(piece => {
 			if (piece == null) return;
+			if (piece.selected) {
+				fill(piece.color);
+				rect(piece.x, piece.y, 50, 50);
+			}
 			fill(piece.color);
 			circle(piece.x + 25, piece.y + 25, 50);
 		});
@@ -53,7 +58,8 @@ function createPieces() {
 						"x": i * 50,
 						"y": j * 50,
 						"color": "red",
-						"isKing": false
+						"isKing": false,
+						"selected": false
 					};
 				}
 				if (j > 4) {
@@ -61,7 +67,8 @@ function createPieces() {
 						"x": i * 50,
 						"y": j * 50,
 						"color": "cyan",
-						"isKing": false
+						"isKing": false,
+						"selected": false
 					};
 				}
 			}
@@ -71,13 +78,40 @@ function createPieces() {
 }
 
 function mousePressed(event) {
-	pieces.forEach(row => {
-		row.forEach(piece => {
-			if (piece == null) return;
-			if ((mouseX > piece.x && mouseX < piece.x + 50) && (mouseY > piece.y && mouseY < piece.y + 50)) {
-				console.log("Clicked: " + piece);
-				console.log(piece);
+	for (let i = 0; i < 8; i++) {
+		for (let j = 0; j < 8; j++) {
+			if ((mouseX > i * 50 && mouseX < (i + 1) * 50) && (mouseY > j * 50 && mouseY < (j + 1) * 50)) {
+				if (sSelected) {
+					if (pieces[i][j] == null && (i + j) % 2 == 1) {
+						pieces[i][j] = {
+							"x": i * 50,
+							"y": j * 50,
+							"color": pieces[xSelected][ySelected].color,
+							"isKing": pieces[xSelected][ySelected].isKing,
+							"selected": pieces[xSelected][ySelected].selected
+						};
+						pieces[xSelected][ySelected] = null;
+						pieces[i][j].selected = false;
+						sSelected = false;
+					}
+					else {
+						if (i == xSelected && j == ySelected) {
+							pieces[i][j].selected = false;
+							sSelected = false;
+						}
+					}
+				}
+				else {
+					if (pieces[i][j] != null) {
+						pieces[i][j].selected = true;
+						sSelected = true;
+						xSelected = i;
+						ySelected = j;
+					}
+				}
+				console.log("Clicked: " + pieces[i][j]);
+				console.log(pieces[i][j]);
 			}
-		});
-	});
+		}
+	}
 }
