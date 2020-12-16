@@ -2,6 +2,9 @@ var pieces = [];
 var sSelected = false;
 var xSelected;
 var ySelected;
+var turn = 0;
+var redScore = 0;
+var cyanScore = 0;
 
 function setup(){
   createCanvas(400,400);
@@ -77,36 +80,66 @@ function createPieces() {
 	}
 }
 
+function legalMove(oldX, oldY, newX, newY) {
+	if ((oldX - newX == 1 || oldX - newX == -1) && (oldY - newY == 1 || oldY - newY == -1)) {
+		return true;
+	}
+	else if ((oldX - newX == 2 || oldX - newX == -2) && (oldY - newY == 2 || oldY - newY == -2)) {
+		if ((pieces[(oldX + newX) / 2][(oldY + newY) / 2].color == "red" && turn % 2 == 0) || (pieces[(oldX + newX) / 2][(oldY + newY) / 2].color == "cyan" && turn % 2 == 1)) {
+			pieces[(oldX + newX) / 2][(oldY + newY) / 2] = null;
+			if (turn % 2 == 0) cyanScore++;
+			else {
+				redScore++;
+			}
+			refreshText();
+			return true;
+		}
+		else return false;
+	}
+}
+
+function refreshText() {
+  $("playersTurn").text("Hello world!");
+  $("redScore").text("Hello world!");
+  $("cyanScore").text("Hello world!");
+}
+
 function mousePressed(event) {
 	for (let i = 0; i < 8; i++) {
 		for (let j = 0; j < 8; j++) {
 			if ((mouseX > i * 50 && mouseX < (i + 1) * 50) && (mouseY > j * 50 && mouseY < (j + 1) * 50)) {
 				if (sSelected) {
 					if (pieces[i][j] == null && (i + j) % 2 == 1) {
-						pieces[i][j] = {
-							"x": i * 50,
-							"y": j * 50,
-							"color": pieces[xSelected][ySelected].color,
-							"isKing": pieces[xSelected][ySelected].isKing,
-							"selected": pieces[xSelected][ySelected].selected
-						};
-						pieces[xSelected][ySelected] = null;
-						pieces[i][j].selected = false;
-						sSelected = false;
+						if (legalMove(xSelected, ySelected, i, j)) {
+							pieces[i][j] = {
+								"x": i * 50,
+								"y": j * 50,
+								"color": pieces[xSelected][ySelected].color,
+								"isKing": pieces[xSelected][ySelected].isKing,
+								"selected": pieces[xSelected][ySelected].selected
+							};
+							pieces[xSelected][ySelected] = null;
+							pieces[i][j].selected = false;
+							sSelected = false;
+						}
 					}
 					else {
 						if (i == xSelected && j == ySelected) {
 							pieces[i][j].selected = false;
 							sSelected = false;
+							turn++;
 						}
 					}
 				}
 				else {
 					if (pieces[i][j] != null) {
-						pieces[i][j].selected = true;
-						sSelected = true;
-						xSelected = i;
-						ySelected = j;
+						if ((pieces[i][j].color == "red" && turn % 2 == 0) || (pieces[i][j].color == "cyan" && turn % 2 == 1)) {
+							pieces[i][j].selected = true;
+							sSelected = true;
+							xSelected = i;
+							ySelected = j;
+							turn++;
+						}
 					}
 				}
 				console.log("Clicked: " + pieces[i][j]);
