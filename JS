@@ -82,6 +82,7 @@ function createPieces() {
 
 function legalMove(oldX, oldY, newX, newY) {
 	if ((oldX - newX == 1 || oldX - newX == -1) && (oldY - newY == 1 || oldY - newY == -1)) {
+		refreshText();
 		return true;
 	}
 	else if ((oldX - newX == 2 || oldX - newX == -2) && (oldY - newY == 2 || oldY - newY == -2)) {
@@ -99,9 +100,11 @@ function legalMove(oldX, oldY, newX, newY) {
 }
 
 function refreshText() {
-  $("playersTurn").text("Hello world!");
-  $("redScore").text("Hello world!");
-  $("cyanScore").text("Hello world!");
+	console.log("text");
+	if (turn % 2 == 0) $("#playersTurn").text("It is the red player's turn");
+	else $("#playersTurn").text("It is the cyan player's turn");
+  $("#redScore").text("Red's Score: " + redScore);
+  $("#cyanScore").text("Cyan's Score: " + cyanScore);
 }
 
 function mousePressed(event) {
